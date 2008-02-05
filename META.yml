@@ -1,0 +1,18 @@
+# http://module-build.sourceforge.net/META-spec.html
+#XXXXXXX This is a prototype!!!  It will change in the future!!! XXXXX#
+name:         DBIx-Class-Fixtures
+version:      0.999_01
+version_from: lib/DBIx/Class/Fixtures.pm
+installdirs:  site
+requires:
+    Class::Accessor::Grouped:      0.06
+    Config::Any:                   0.08
+    Data::Dump::Streamer:          2.05
+    DBIx::Class:                   0.08
+    Hash::Merge:                   0.1
+    JSON::Syck:                    0.26
+    Path::Class:                   0.16
+    Test::More:                    0.7
+
+distribution_type: module
+generated_by: ExtUtils::MakeMaker version 6.17
