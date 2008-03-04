@@ -10,6 +10,10 @@ WriteMakefile(
     PREREQ_PM => {
         'Test::More' => 0.7,
         'DBIx::Class' => 0.08,
+        'Data::Visitor' => 0.15,
+        'File::Copy::Recursive' => 0.35,
+        'DateTime' => 0.41,
+        'DBIx::Class::Schema::Loader' => 0.04004,
         'Class::Accessor::Grouped' => 0.06,
         'Path::Class' => 0.16,
         'Config::Any' => 0.08,

@@ -1,18 +1,25 @@
-# http://module-build.sourceforge.net/META-spec.html
-#XXXXXXX This is a prototype!!!  It will change in the future!!! XXXXX#
-name:         DBIx-Class-Fixtures
-version:      0.999_01
-version_from: lib/DBIx/Class/Fixtures.pm
-installdirs:  site
-requires:
+--- #YAML:1.0
+name:                DBIx-Class-Fixtures
+version:             1.000000
+abstract:            ~
+license:             ~
+generated_by:        ExtUtils::MakeMaker version 6.36
+distribution_type:   module
+requires:     
     Class::Accessor::Grouped:      0.06
     Config::Any:                   0.08
     Data::Dump::Streamer:          2.05
+    Data::Visitor:                 0.15
+    DateTime:                      0.41
     DBIx::Class:                   0.08
+    DBIx::Class::Schema::Loader:   0.04004
+    File::Copy::Recursive:         0.35
     Hash::Merge:                   0.1
     JSON::Syck:                    0.26
     Path::Class:                   0.16
     Test::More:                    0.7
-
-distribution_type: module
-generated_by: ExtUtils::MakeMaker version 6.17
+meta-spec:
+    url:     http://module-build.sourceforge.net/META-spec-v1.2.html
+    version: 1.2
+author:
+    - Luke Saunders <luke@shadowcatsystems.co.uk>
