@@ -25,11 +25,11 @@ __PACKAGE__->mk_group_accessors( 'simple' => qw/config_dir _inherited_attributes
 
 =head1 VERSION
 
-Version 1.000000
+Version 1.000001
 
 =cut
 
-our $VERSION = '1.000000';
+our $VERSION = '1.000001';
 
 =head1 NAME
 
@@ -424,6 +424,7 @@ sub dump {
     $config->{belongs_to} = { fetch => 1 } unless (exists $config->{belongs_to});
   } elsif ($params->{all}) {
     $config = { might_have => { fetch => 0 }, has_many => { fetch => 0 }, belongs_to => { fetch => 0 }, sets => [map {{ class => $_, quantity => 'all' }} $schema->sources] };
+    print Dumper($config);
   } else {
     return DBIx::Class::Exception->throw('must pass config or set all');
   }
@@ -731,7 +732,6 @@ sub populate {
   }
 
   my $schema = $self->_generate_schema({ ddl => $ddl_file, connection_details => delete $params->{connection_details}, %{$params} });
-  return 1 if ($params->{no_populate});
   $self->msg("\nimporting fixtures");
   my $tmp_fixture_dir = dir($fixture_dir, "-~populate~-" . $<);
 
