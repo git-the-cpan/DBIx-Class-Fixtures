@@ -15,18 +15,6 @@ no_index:
   directory: 
     - inc
     - t
-provides: 
-  DBIx::Class::Fixtures: 
-    file: lib/DBIx/Class/Fixtures.pm
-    version: 1.000002
-  DBIx::Class::Fixtures::Schema: 
-    file: lib/DBIx/Class/Fixtures/Schema.pm
-  DBIx::Class::Fixtures::SchemaVersioned: 
-    file: lib/DBIx/Class/Fixtures/SchemaVersioned.pm
-    version: 0
-  DBIx::Class::Fixtures::Versioned: 
-    file: lib/DBIx/Class/Fixtures/Versioned.pm
-    version: 1.000002
 requires: 
   Class::Accessor::Grouped: 0.06
   Config::Any: 0.08
@@ -43,4 +31,4 @@ requires:
   Path::Class: 0.16
   perl: 5.6.1
 tests: t/*.t
-version: 1.000002
+version: 1.001000

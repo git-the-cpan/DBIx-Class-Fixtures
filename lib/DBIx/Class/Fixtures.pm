@@ -25,11 +25,11 @@ __PACKAGE__->mk_group_accessors( 'simple' => qw/config_dir _inherited_attributes
 
 =head1 VERSION
 
-Version 1.000002
+Version 1.001000
 
 =cut
 
-our $VERSION = '1.000002';
+our $VERSION = '1.001000';
 
 =head1 NAME
 
@@ -52,7 +52,8 @@ DBIx::Class::Fixtures
   $fixtures->populate({
     directory => '/home/me/app/fixtures',
     ddl => '/home/me/app/sql/ddl.sql',
-    connection_details => ['dbi:mysql:dbname=app_dev', 'me', 'password']
+    connection_details => ['dbi:mysql:dbname=app_dev', 'me', 'password'],
+    post_ddl => '/home/me/app/sql/post_ddl.sql',
   });
 
 =head1 DESCRIPTION
@@ -150,6 +151,23 @@ rules must be a hash keyed by class name.
 
 L</RULE ATTRIBUTES>
 
+=head2 includes
+
+To prevent repetition between configs you can include other configs. For example:
+
+    {
+        sets: [{
+            class: 'Producer',
+            ids: ['5']
+        }],
+        includes: [{
+            file: 'base.json'
+        }]
+    }
+
+Includes must be an arrayref of hashrefs where the hashrefs have key 'file' which is the name of another config
+file in the same directory. The original config is merged with its includes using Hash::Merge.
+
 =head2 datetime_relative
 
 Only available for MySQL and PostgreSQL at the moment, must be a value that DateTime::Format::*
@@ -173,7 +191,7 @@ fixture is imported the field will be set to 5 days in the past relative to the 
 Specifies whether to automatically dump might_have relationships. Should be a hash with one attribute - fetch. Set fetch to 1 or 0.
 
     {
-        might_have: [{
+        might_have: {
             fetch: 1
         },
         sets: [{
@@ -409,16 +427,40 @@ sub dump {
   my $config_file;
   my $config;
   if ($params->{config}) {
+    #read config
     $config_file = file($self->config_dir, $params->{config});
     unless (-e $config_file) {
       return DBIx::Class::Exception->throw('config does not exist at ' . $config_file);
     }
-
     $config = Config::Any::JSON->load($config_file);
+
+    #process includes
+    if ($config->{includes}) {
+      $self->msg($config->{includes});
+      unless (ref $config->{includes} eq 'ARRAY') {
+        return DBIx::Class::Exception->throw('includes params of config must be an array ref of hashrefs');
+      }
+      foreach my $include_config (@{$config->{includes}}) {
+        unless ((ref $include_config eq 'HASH') && $include_config->{file}) {
+          return DBIx::Class::Exception->throw('includes params of config must be an array ref of hashrefs');
+        }
+        
+        my $include_file = file($self->config_dir, $include_config->{file});
+        unless (-e $include_file) {
+          return DBIx::Class::Exception->throw('config does not exist at ' . $include_file);
+        }
+        my $include = Config::Any::JSON->load($include_file);
+        $self->msg($include);
+        $config = merge( $config, $include );
+      }
+      delete $config->{includes};
+    }
+    
+    # validate config
     unless ($config && $config->{sets} && ref $config->{sets} eq 'ARRAY' && scalar(@{$config->{sets}})) {
       return DBIx::Class::Exception->throw('config has no sets');
     }
-
+	
     $config->{might_have} = { fetch => 0 } unless (exists $config->{might_have});
     $config->{has_many} = { fetch => 0 } unless (exists $config->{has_many});
     $config->{belongs_to} = { fetch => 1 } unless (exists $config->{belongs_to});
@@ -459,6 +501,13 @@ sub dump {
 
     # fetch objects
     my $rs = $schema->resultset($source->{class});
+
+    if ($source->{cond} and ref $source->{cond} eq 'HASH') {
+      # if value starts with / assume it's meant to be passed as a scalar ref to dbic
+      # ideally this would substitute deeply
+      $source->{cond} = { map { $_ => ($source->{cond}->{$_} =~ s/^\\//) ? \$source->{cond}->{$_} : $source->{cond}->{$_} } keys %{$source->{cond}} };
+    }
+
     $rs = $rs->search($source->{cond}, { join => $source->{join} }) if ($source->{cond});
     $self->msg("- dumping $source->{class}");
     my @objects;
@@ -519,7 +568,11 @@ sub dump_object {
   # write dir and gen filename
   my $source_dir = dir($params->{set_dir}, lc($object->result_source->from));
   mkdir($source_dir->stringify, 0777);
-  my $file = file($source_dir, join('-', map { $object->get_column($_) } sort $object->primary_columns) . '.fix');
+
+  # strip dir separators from file name
+  my $file = file($source_dir, join('-', map { 
+    ( my $a = $object->get_column($_) ) =~ s|[/\\]|_|g; $a;
+  } sort $object->primary_columns) . '.fix');
 
   # write file
   my $exists = (-e $file->stringify) ? 1 : 0;
@@ -640,25 +693,22 @@ sub _generate_schema {
     return DBIx::Class::Exception->throw('connection details not valid');
   }
   my @tables = map { $pre_schema->source($_)->from } $pre_schema->sources;
+  $self->msg("Tables to drop: [". join(', ', sort @tables) . "]");
   my $dbh = $pre_schema->storage->dbh;
 
   # clear existing db
   $self->msg("- clearing DB of existing tables");
   eval { $dbh->do('SET foreign_key_checks=0') };
-  $dbh->do('drop table ' . $_) for (@tables);
+  foreach my $table (@tables) {
+    eval { $dbh->do('drop table ' . $table . ($params->{cascade} ? ' cascade' : '') ) };
+  }
 
   # import new ddl file to db
   my $ddl_file = $params->{ddl};
   $self->msg("- deploying schema using $ddl_file");
-  my $fh;
-  open $fh, "<$ddl_file" or die ("Can't open DDL file, $ddl_file ($!)");
-  my @data = split(/\n/, join('', <$fh>));
-  @data = grep(!/^--/, @data);
-  @data = split(/;/, join('', @data));
-  close($fh);
-  @data = grep { $_ && $_ !~ /^-- / } @data;
-  for (@data) {
-      eval { $dbh->do($_) or warn "SQL was:\n $_"};
+  my $data = _read_sql($ddl_file);
+  foreach (@$data) {
+    eval { $dbh->do($_) or warn "SQL was:\n $_"};
 	  if ($@) { die "SQL was:\n $_\n$@"; }
   }
   $self->msg("- finished importing DDL into DB");
@@ -671,6 +721,17 @@ sub _generate_schema {
   return $schema;
 }
 
+sub _read_sql {
+  my $ddl_file = shift;
+  my $fh;
+  open $fh, "<$ddl_file" or die ("Can't open DDL file, $ddl_file ($!)");
+  my @data = split(/\n/, join('', <$fh>));
+  @data = grep(!/^--/, @data);
+  @data = split(/;/, join('', @data));
+  close($fh);
+  @data = grep { $_ && $_ !~ /^-- / } @data;
+  return \@data;
+}
 
 =head2 populate
 
@@ -685,7 +746,9 @@ sub _generate_schema {
   $fixtures->populate({
     directory => '/home/me/app/fixtures', # directory to look for fixtures in, as specified to dump
     ddl => '/home/me/app/sql/ddl.sql', # DDL to deploy
-    connection_details => ['dbi:mysql:dbname=app_dev', 'me', 'password'] # database to clear, deploy and then populate
+    connection_details => ['dbi:mysql:dbname=app_dev', 'me', 'password'], # database to clear, deploy and then populate
+    post_ddl => '/home/me/app/sql/post_ddl.sql', # DDL to deploy after populating records, ie. FK constraints
+    cascade => 1, # use CASCADE option when dropping tables
   });
 
 In this case the database app_dev will be cleared of all tables, then the specified DDL deployed to it,
@@ -693,6 +756,13 @@ then finally all fixtures found in /home/me/app/fixtures will be added to it. po
 its own DBIx::Class schema from the DDL rather than being passed one to use. This is better as
 custom insert methods are avoided which can to get in the way. In some cases you might not
 have a DDL, and so this method will eventually allow a $schema object to be passed instead.
+
+If needed, you can specify a post_ddl attribute which is a DDL to be applied after all the fixtures
+have been added to the database. A good use of this option would be to add foreign key constraints
+since databases like Postgresql cannot disable foreign key checks.
+
+If your tables have foreign key constraints you may want to use the cascade attribute which will
+make the drop table functionality cascade, ie 'DROP TABLE $table CASCADE'.
 
 directory, dll and connection_details are all required attributes.
 
@@ -770,6 +840,7 @@ sub populate {
     my $rs = $schema->resultset($source);
     my $source_dir = dir($tmp_fixture_dir, lc($rs->result_source->from));
     next unless (-e $source_dir);
+    my @rows;
     while (my $file = $source_dir->next) {
       next unless ($file =~ /\.fix$/);
       next if $file->is_dir;
@@ -777,8 +848,18 @@ sub populate {
       my $HASH1;
       eval($contents);
       $HASH1 = $fixup_visitor->visit($HASH1) if $fixup_visitor;
-      $rs->create($HASH1);
+      push(@rows, $HASH1);
     }
+    $rs->populate(\@rows);
+  }
+
+  if ($params->{post_ddl}) {
+    my $data = _read_sql($params->{post_ddl});
+    foreach (@$data) {
+      eval { $schema->storage->dbh->do($_) or warn "SQL was:\n $_"};
+  	  if ($@) { die "SQL was:\n $_\n$@"; }
+    }
+    $self->msg("- finished importing post-populate DDL into DB");
   }
 
   $self->msg("- fixtures imported");
@@ -793,7 +874,6 @@ sub msg {
   my $self = shift;
   my $subject = shift || return;
   my $level = shift || 1;
-
   return unless $self->debug >= $level;
   if (ref $subject) {
 	print Dumper($subject);
@@ -812,6 +892,7 @@ sub msg {
 
   Ash Berlin <ash@shadowcatsystems.co.uk>
   Matt S. Trout <mst@shadowcatsystems.co.uk>
+  Drew Taylor <taylor.andrew.j@gmail.com>
 
 =head1 LICENSE
 
