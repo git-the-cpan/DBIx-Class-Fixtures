@@ -31,4 +31,4 @@ requires:
   Path::Class: 0.16
   perl: 5.6.1
 tests: t/*.t
-version: 1.001000
+version: 1.001001
