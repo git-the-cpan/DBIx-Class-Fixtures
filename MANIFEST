@@ -15,8 +15,6 @@ lib/DBIx/Class/Fixtures/DBI.pm
 lib/DBIx/Class/Fixtures/DBI/mysql.pm
 lib/DBIx/Class/Fixtures/DBI/Pg.pm
 lib/DBIx/Class/Fixtures/Schema.pm
-lib/DBIx/Class/Fixtures/SchemaVersioned.pm
-lib/DBIx/Class/Fixtures/Versioned.pm
 Makefile.PL
 MANIFEST			This list of files
 META.yml
@@ -59,5 +57,3 @@ t/var/configs/rules.json
 t/var/configs/sample.json
 t/var/configs/scalar_ref.json
 t/var/configs/simple.json
-t/var/DBIxClass.db
-t/var/DBIxClassDifferent.db
