@@ -57,3 +57,5 @@ t/var/configs/rules.json
 t/var/configs/sample.json
 t/var/configs/scalar_ref.json
 t/var/configs/simple.json
+t/var/DBIxClass.db
+t/var/DBIxClassDifferent.db

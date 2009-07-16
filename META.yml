@@ -8,7 +8,7 @@ build_requires:
 configure_requires:
   ExtUtils::MakeMaker: 6.42
 distribution_type: module
-generated_by: 'Module::Install version 0.88'
+generated_by: 'Module::Install version 0.91'
 license: perl
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
@@ -26,7 +26,9 @@ requires:
   Data::Dump::Streamer: 2.05
   Data::Visitor: 0.15
   DateTime: 0.41
-  DateTime::Format::MySQL: 0.04
+  DateTime::Format::MySQL: 0
+  DateTime::Format::Pg: 0
+  DateTime::Format::SQLite: 0.1
   File::Copy::Recursive: 0.35
   Hash::Merge: 0.1
   JSON::Syck: 0.26
@@ -34,4 +36,4 @@ requires:
   perl: 5.6.1
 resources:
   license: http://dev.perl.org/licenses/
-version: 1.001002
+version: 1.001003
