@@ -26,11 +26,11 @@ __PACKAGE__->mk_group_accessors( 'simple' => qw/config_dir
 
 =head1 VERSION
 
-Version 1.001000
+Version 1.001004
 
 =cut
 
-our $VERSION = '1.001003';
+our $VERSION = '1.001004';
 
 =head1 NAME
 
@@ -422,7 +422,7 @@ sub new {
 
   my $self = {
               config_dir => $config_dir,
-              _inherited_attributes => [qw/datetime_relative might_have rules/],
+              _inherited_attributes => [qw/datetime_relative might_have rules belongs_to/],
               debug => $params->{debug} || 0,
               ignore_sql_errors => $params->{ignore_sql_errors},
               dumped_objects => {}
