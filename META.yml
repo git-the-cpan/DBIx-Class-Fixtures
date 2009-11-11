@@ -36,4 +36,4 @@ requires:
   perl: 5.6.1
 resources:
   license: http://dev.perl.org/licenses/
-version: 1.001004
+version: 1.001005
