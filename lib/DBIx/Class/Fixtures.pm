@@ -26,11 +26,11 @@ __PACKAGE__->mk_group_accessors( 'simple' => qw/config_dir
 
 =head1 VERSION
 
-Version 1.001007
+Version 1.001008
 
 =cut
 
-our $VERSION = '1.001007';
+our $VERSION = '1.001008';
 
 =head1 NAME
 
@@ -525,7 +525,7 @@ sub dump {
   my @sources = sort { $a->{class} cmp $b->{class} } @{delete $config->{sets}};
 
   while ( my ($k,$v) = each %{ $config->{rules} } ) {
-    if ( my $source = $schema->source($k) ) {
+    if ( my $source = eval { $schema->source($k) } ) {
       $config->{rules}{$source->source_name} = $v;
     }
   }

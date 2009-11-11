@@ -1,5 +1,8 @@
 Revision history for DBIx-Class-Fixtures
 
+1.001008
+- Man, I should test better.
+
 1.001007
 - Should use Schema->source(), not ->resultset().
 
