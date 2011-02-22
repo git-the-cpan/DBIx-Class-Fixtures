@@ -22,7 +22,7 @@ requires:
   Class::Accessor::Grouped: 0.06
   Config::Any: 0.08
   DBIx::Class: 0.08102
-  DBIx::Class::Schema::Loader: 0.04006
+  DBIx::Class::Schema::Loader: 0.07
   Data::Dump::Streamer: 2.05
   Data::Visitor: 0.15
   DateTime: 0.41
@@ -36,4 +36,4 @@ requires:
   perl: 5.6.1
 resources:
   license: http://dev.perl.org/licenses/
-version: 1.001010
+version: 1.001011

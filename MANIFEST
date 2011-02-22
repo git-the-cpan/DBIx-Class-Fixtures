@@ -31,8 +31,10 @@ t/08-dump-includes.t
 t/09-dump-scalar-ref.t
 t/10-dump-cleanup.t
 t/12-populate-basic.t
-t/13populate-two-dbs.t
+t/13-populate-two-dbs.t
 t/14-populate-post.t
+t/15-multiple-belongs-to.t
+t/16-rules-hasmany.t
 t/lib/DBICTest.pm
 t/lib/DBICTest/Schema.pm
 t/lib/DBICTest/Schema/Artist.pm
@@ -52,10 +54,11 @@ t/lib/sqlite_different.sql
 t/var/configs/date.json
 t/var/configs/fetch.json
 t/var/configs/includes.json
+t/var/configs/multiple-has-many.json
 t/var/configs/quantity.json
 t/var/configs/rules.json
+t/var/configs/rules2.json
 t/var/configs/sample.json
 t/var/configs/scalar_ref.json
 t/var/configs/simple.json
-t/var/DBIxClass.db
-t/var/DBIxClassDifferent.db
+t/var/configs/use_create.json

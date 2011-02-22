@@ -26,11 +26,11 @@ __PACKAGE__->mk_group_accessors( 'simple' => qw/config_dir
 
 =head1 VERSION
 
-Version 1.001010
+Version 1.001011
 
 =cut
 
-our $VERSION = '1.001010';
+our $VERSION = '1.001011';
 
 =head1 NAME
 
@@ -425,7 +425,8 @@ sub new {
               _inherited_attributes => [qw/datetime_relative might_have rules belongs_to/],
               debug => $params->{debug} || 0,
               ignore_sql_errors => $params->{ignore_sql_errors},
-              dumped_objects => {}
+              dumped_objects => {},
+              use_create => $params->{use_create} || 0
   };
 
   bless $self, $class;
@@ -465,7 +466,12 @@ directory. For example:
  /home/me/app/fixtures/artist/3.fix
  /home/me/app/fixtures/producer/5.fix
 
-schema and directory are required attributes. also, one of config or all must be specified.
+schema and directory are required attributes. also, one of config or all must
+be specified.
+
+Lastly, the C<config> parameter can be a Perl HashRef instead of a file name.
+If this form is used your HashRef should conform to the structure rules defined
+for the JSON representations.
 
 =cut
 
@@ -483,18 +489,32 @@ sub dump {
     }
   }
 
+  if($params->{excludes} && !$params->{all}) {
+    return DBIx::Class::Exception->throw("'excludes' param only works when using the 'all' param");
+  }
+
   my $schema = $params->{schema};
   my $config;
   if ($params->{config}) {
-    #read config
-    my $config_file = $self->config_dir->file($params->{config});
-    $config = $self->load_config_file($config_file);
+    $config = ref $params->{config} eq 'HASH' ? 
+      $params->{config} : 
+      do {
+        #read config
+        my $config_file = $self->config_dir->file($params->{config});
+        $self->load_config_file($config_file);
+      };
   } elsif ($params->{all}) {
+    my %excludes = map {$_=>1} @{$params->{excludes}||[]};
     $config = { 
       might_have => { fetch => 0 },
       has_many => { fetch => 0 },
       belongs_to => { fetch => 0 },
-      sets => [map {{ class => $_, quantity => 'all' }} $schema->sources] 
+      sets => [
+        map {
+          { class => $_, quantity => 'all' };
+        } grep {
+          !$excludes{$_}
+        } $schema->sources],
     };
   } else {
     DBIx::Class::Exception->throw('must pass config or set all');
@@ -932,6 +952,11 @@ sub _read_sql {
    # optional, set to 1 to run ddl but not populate 
    no_populate => 0,
 
+	# optional, set to 1 to run each fixture through ->create rather than have
+   # each $rs populated using $rs->populate. Useful if you have overridden new() logic
+	# that effects the value of column(s).
+	use_create => 0,
+
    # Dont try to clean the database, just populate over whats there. Requires
    # schema option. Use this if you want to handle removing old data yourself
    # no_deploy => 1
@@ -1059,7 +1084,11 @@ sub populate {
           my $HASH1;
           eval($contents);
           $HASH1 = $fixup_visitor->visit($HASH1) if $fixup_visitor;
-          push(@rows, $HASH1);
+          if ( $params->{use_create} ) {
+            $rs->create( $HASH1 );
+          } else {
+            push(@rows, $HASH1);
+          }
         }
         $rs->populate(\@rows) if scalar(@rows);
       }
