@@ -35,6 +35,7 @@ t/13-populate-two-dbs.t
 t/14-populate-post.t
 t/15-multiple-belongs-to.t
 t/16-rules-hasmany.t
+t/17-dump_all_config_sets.t
 t/lib/DBICTest.pm
 t/lib/DBICTest/Schema.pm
 t/lib/DBICTest/Schema/Artist.pm
