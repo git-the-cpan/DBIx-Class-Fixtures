@@ -3,12 +3,14 @@ abstract: 'Dump data and repopulate a database using rules'
 author:
   - 'Luke Saunders <luke@shadowcatsystems.co.uk>'
 build_requires:
-  ExtUtils::MakeMaker: 6.42
-  Test::More: 0.7
+  DBIx::Class::InflateColumn::FS: 0
+  ExtUtils::MakeMaker: 6.62
+  Test::More: 0
 configure_requires:
-  ExtUtils::MakeMaker: 6.42
+  ExtUtils::MakeMaker: 6.62
 distribution_type: module
-generated_by: 'Module::Install version 1.00'
+dynamic_config: 1
+generated_by: 'Module::Install version 1.04'
 license: perl
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
@@ -30,11 +32,13 @@ requires:
   DateTime::Format::Pg: 0
   DateTime::Format::SQLite: 0.1
   File::Copy::Recursive: 0.35
+  File::Spec::Functions: 0
   Hash::Merge: 0.1
   JSON::Syck: 0.26
+  MIME::Base64: 0
   Path::Class: 0.16
   Scalar::Util: 0
   perl: 5.6.1
 resources:
   license: http://dev.perl.org/licenses/
-version: 1.001013
+version: 1.001014

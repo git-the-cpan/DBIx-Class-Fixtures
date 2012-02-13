@@ -14,6 +14,7 @@ lib/DBIx/Class/Fixtures.pm
 lib/DBIx/Class/Fixtures/DBI.pm
 lib/DBIx/Class/Fixtures/DBI/mysql.pm
 lib/DBIx/Class/Fixtures/DBI/Pg.pm
+lib/DBIx/Class/Fixtures/External/File.pm
 lib/DBIx/Class/Fixtures/Schema.pm
 Makefile.PL
 MANIFEST			This list of files
@@ -36,6 +37,7 @@ t/14-populate-post.t
 t/15-multiple-belongs-to.t
 t/16-rules-hasmany.t
 t/17-dump_all_config_sets.t
+t/18-extra.t
 t/lib/DBICTest.pm
 t/lib/DBICTest/Schema.pm
 t/lib/DBICTest/Schema/Artist.pm
@@ -48,11 +50,13 @@ t/lib/DBICTest/Schema2.pm
 t/lib/DBICTest/Schema2/Artist.pm
 t/lib/DBICTest/Schema2/CD.pm
 t/lib/DBICTest/Schema2/Friend.pm
+t/lib/ExtraTest/Schema.pm
 t/lib/mysql.sql
 t/lib/post_sqlite.sql
 t/lib/sqlite.sql
 t/lib/sqlite_different.sql
 t/var/configs/date.json
+t/var/configs/extra.json
 t/var/configs/fetch.json
 t/var/configs/includes.json
 t/var/configs/multiple-has-many.json
