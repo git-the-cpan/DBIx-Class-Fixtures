@@ -4,13 +4,13 @@ author:
   - 'Luke Saunders <luke@shadowcatsystems.co.uk>'
 build_requires:
   DBIx::Class::InflateColumn::FS: 0
-  ExtUtils::MakeMaker: 6.62
+  ExtUtils::MakeMaker: 6.59
   Test::More: 0
 configure_requires:
-  ExtUtils::MakeMaker: 6.62
+  ExtUtils::MakeMaker: 6.59
 distribution_type: module
 dynamic_config: 1
-generated_by: 'Module::Install version 1.04'
+generated_by: 'Module::Install version 1.06'
 license: perl
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
@@ -32,6 +32,7 @@ requires:
   DateTime::Format::Pg: 0
   DateTime::Format::SQLite: 0.1
   File::Copy::Recursive: 0.35
+  File::Path: 0
   File::Spec::Functions: 0
   Hash::Merge: 0.1
   JSON::Syck: 0.26
@@ -41,4 +42,4 @@ requires:
   perl: 5.6.1
 resources:
   license: http://dev.perl.org/licenses/
-version: 1.001014
+version: 1.001015

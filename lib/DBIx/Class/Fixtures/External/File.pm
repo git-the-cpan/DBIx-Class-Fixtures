@@ -3,7 +3,8 @@ package DBIx::Class::Fixtures::External::File;
 use strict;
 use warnings;
 
-use File::Spec::Functions 'catfile';
+use File::Spec::Functions 'catfile', 'splitpath';
+use File::Path 'mkpath';
 
 sub _load {
   my ($class, $path) = @_;
@@ -30,6 +31,8 @@ sub backup {
 sub restore {
   my ($class, $key, $content, $args) = @_;
   my $path = catfile($args->{path}, $key);
+  my ($vol, $directory, $file) = splitpath($path);
+  mkpath($directory) unless -d $directory;
   $class->_save($path, $content);
 }
 
