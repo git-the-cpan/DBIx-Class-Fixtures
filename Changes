@@ -1,5 +1,11 @@
 Revision history for DBIx-Class-Fixtures
 
+1.001016
+- Support more Postgresql types for datetime_relative (added TIME, DATE,
+  INTERVAL, TIMESTAMP)
+- If $result_source->column_info defines a sequence, make sure we properly
+  set that sequence to whatever the max value currently is.
+
 1.001015
 - ::External::File makes the path if its missing
 
