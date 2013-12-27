@@ -1,5 +1,13 @@
 use inc::Module::Install 0.79;
 
+homepage 'http://www.dbix-class.org/';
+resources 'IRC'         => 'irc://irc.perl.org/#dbix-class';
+resources 'license'     => 'http://dev.perl.org/licenses/';
+                           # r/w: dbsrgits@git.shadowcat.co.uk:DBIx-Class-Fixtures.git
+resources 'repository', => 'git://git.shadowcat.co.uk/dbsrgits/DBIx-Class-Fixtures.git',
+resources 'MailingList' => 'http://lists.scsys.co.uk/cgi-bin/mailman/listinfo/dbix-class';
+resources 'bugtracker'  => 'http://rt.cpan.org/NoAuth/Bugs.html?Dist=DBIx-Class-Fixtures';
+
 perl_version '5.006001';
 name     'DBIx-Class-Fixtures';
 all_from 'lib/DBIx/Class/Fixtures.pm';
