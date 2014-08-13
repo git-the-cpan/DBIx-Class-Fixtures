@@ -3,34 +3,46 @@ abstract: 'Dump data and repopulate a database using rules'
 author:
   - 'Luke Saunders <luke@shadowcatsystems.co.uk>'
 build_requires:
+  DBIx::Class::Core: 0
   DBIx::Class::InflateColumn::FS: 0.01007
+  DBIx::Class::Schema: 0
+  DateTime: 1.03
   ExtUtils::MakeMaker: 6.59
+  File::Spec: 0
+  FindBin: 0
+  IO::Handle: 0
+  IPC::Open3: 0
+  Module::Runtime: 0
+  Test::Compile::Internal: 0
   Test::More: 0.98
+  lib: 0
 configure_requires:
   ExtUtils::MakeMaker: 6.59
-distribution_type: module
-dynamic_config: 1
-generated_by: 'Module::Install version 1.06'
+dynamic_config: 0
+generated_by: 'Dist::Zilla version 5.020, CPAN::Meta::Converter version 2.132830'
 license: perl
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
   version: 1.4
 name: DBIx-Class-Fixtures
-no_index:
-  directory:
-    - inc
-    - t
 requires:
   Class::Accessor::Grouped: 0.1001
+  Class::C3::Componentised: 0
   Config::Any: 0.23
+  Config::Any::JSON: 0
+  DBI: 0
   DBIx::Class: 0.08102
+  DBIx::Class::Exception: 0
   DBIx::Class::Schema::Loader: 0.07035
   Data::Dump::Streamer: 2.05
+  Data::Dumper: 0
   Data::Visitor: 0.3
+  Data::Visitor::Callback: 0
   DateTime: 1.03
   DateTime::Format::MySQL: 0
   DateTime::Format::Pg: 0
   DateTime::Format::SQLite: 0.1
+  File::Copy: 0
   File::Copy::Recursive: 0.38
   File::Path: 2.09
   File::Spec::Functions: 3.4
@@ -39,12 +51,8 @@ requires:
   MIME::Base64: 0
   Path::Class: 0.32
   Scalar::Util: 1.27
-  perl: 5.6.1
-resources:
-  IRC: irc://irc.perl.org/#dbix-class
-  MailingList: http://lists.scsys.co.uk/cgi-bin/mailman/listinfo/dbix-class
-  bugtracker: http://rt.cpan.org/NoAuth/Bugs.html?Dist=DBIx-Class-Fixtures
-  homepage: http://www.dbix-class.org/
-  license: http://dev.perl.org/licenses/
-  repository: git://git.shadowcat.co.uk/dbsrgits/DBIx-Class-Fixtures.git
-version: 1.001021
+  base: 0
+  perl: v5.6.1
+  strict: 0
+  warnings: 0
+version: 1.001022_01
