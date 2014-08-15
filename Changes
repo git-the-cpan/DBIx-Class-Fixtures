@@ -1,5 +1,9 @@
 Revision history for DBIx-Class-Fixtures
 
+1.001024  2014-08-15 13:55:57+01:00 Europe/London
+
+-  Missing test dependency added
+
 1.001023  2014-08-13 22:20:17+01:00 Europe/London
 - No change from last version
 

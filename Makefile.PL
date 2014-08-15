@@ -42,7 +42,8 @@ my %WriteMakefileArgs = (
     "JSON::Syck" => "1.27",
     "MIME::Base64" => 0,
     "Path::Class" => "0.32",
-    "Scalar::Util" => "1.27"
+    "Scalar::Util" => "1.27",
+    "Test::Compile::Internal" => 0
   },
   "TEST_REQUIRES" => {
     "File::Spec" => 0,
@@ -50,7 +51,7 @@ my %WriteMakefileArgs = (
     "IPC::Open3" => 0,
     "Test::More" => "0.98"
   },
-  "VERSION" => "1.001023",
+  "VERSION" => "1.001024",
   "test" => {
     "TESTS" => "t/*.t"
   }
@@ -81,6 +82,7 @@ my %FallbackPrereqs = (
   "MIME::Base64" => 0,
   "Path::Class" => "0.32",
   "Scalar::Util" => "1.27",
+  "Test::Compile::Internal" => 0,
   "Test::More" => "0.98"
 );
 

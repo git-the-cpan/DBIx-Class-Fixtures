@@ -1,5 +1,5 @@
 package DBIx::Class::Fixtures::DBI::mysql;
-$DBIx::Class::Fixtures::DBI::mysql::VERSION = '1.001023';
+$DBIx::Class::Fixtures::DBI::mysql::VERSION = '1.001024';
 use strict;
 use warnings;
 use base qw/DBIx::Class::Fixtures::DBI/;
