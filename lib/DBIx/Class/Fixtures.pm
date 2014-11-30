@@ -26,7 +26,7 @@ our $namespace_counter = 0;
 __PACKAGE__->mk_group_accessors( 'simple' => qw/config_dir
     _inherited_attributes debug schema_class dumped_objects config_attrs/);
 
-our $VERSION = '1.001023';
+our $VERSION = '1.001025';
 
 $VERSION = eval $VERSION;
 
@@ -868,7 +868,7 @@ sub dump_object {
 
         $ds{external}->{$field} =
           encode_base64( $class
-           ->backup($key => $args));
+           ->backup($key => $args),'');
       }
     }
 
