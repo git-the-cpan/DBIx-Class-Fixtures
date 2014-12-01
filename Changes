@@ -1,5 +1,9 @@
 Revision history for DBIx-Class-Fixtures
 
+1.001026  2014-12-01 16:43:10+00:00 Europe/London
+
+- bugfix: not relying on $src->from to be a string anymore, use $src->name or $src->source_name. mrf++
+
 1.001025  2014-11-30 00:58:13+00:00 Europe/London
 
 - optimization: add empty string as second arg to encode_base64 - rammo++

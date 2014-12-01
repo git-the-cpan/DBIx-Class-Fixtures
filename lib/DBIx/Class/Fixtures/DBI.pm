@@ -1,5 +1,5 @@
 package DBIx::Class::Fixtures::DBI;
-$DBIx::Class::Fixtures::DBI::VERSION = '1.001025';
+$DBIx::Class::Fixtures::DBI::VERSION = '1.001026';
 use strict;
 use warnings;
 
