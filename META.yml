@@ -41,7 +41,7 @@ requires:
 resources:
   bugtracker: https://github.com/dbsrgits/DBIx-Class-Fixtures/issues
   repository: https://github.com/dbsrgits/DBIx-Class-Fixtures.git
-version: 1.001027_01
+version: 1.001027_02
 x_authority: cpan:SKAUFMAN
 x_contributors:
   - 'Ash Berlin <ash_github@firemirror.com>'
