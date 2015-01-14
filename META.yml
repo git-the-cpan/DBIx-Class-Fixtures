@@ -4,6 +4,7 @@ author:
   - 'Luke Saunders <luke@shadowcatsystems.co.uk>'
 build_requires:
   DBIx::Class::InflateColumn::FS: '0.01007'
+  Devel::Confess: '0'
   ExtUtils::MakeMaker: '6.59'
   File::Spec: '0'
   IO::Handle: '0'
@@ -39,9 +40,8 @@ requires:
   Test::Compile::Internal: '0'
   perl: v5.6.1
 resources:
-  bugtracker: https://github.com/dbsrgits/DBIx-Class-Fixtures/issues
   repository: https://github.com/dbsrgits/DBIx-Class-Fixtures.git
-version: '1.001028'
+version: 1.001_029
 x_authority: cpan:SKAUFMAN
 x_contributors:
   - 'Ash Berlin <ash_github@firemirror.com>'
