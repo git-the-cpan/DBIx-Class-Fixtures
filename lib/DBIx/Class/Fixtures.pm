@@ -23,7 +23,7 @@ our $namespace_counter = 0;
 __PACKAGE__->mk_group_accessors( 'simple' => qw/config_dir
     _inherited_attributes debug schema_class dumped_objects config_attrs/);
 
-our $VERSION = '1.001_030';
+our $VERSION = '1.001_031';
 
 $VERSION = eval $VERSION;
 
@@ -1353,9 +1353,10 @@ sub populate {
     $fixup_visitor = new Data::Visitor::Callback(%callbacks);
   }
 
+  my @sorted_source_names = $self->_get_sorted_sources( $schema );
   $schema->storage->txn_do(sub {
     $schema->storage->with_deferred_fk_checks(sub {
-      foreach my $source (sort $schema->sources) {
+      foreach my $source (@sorted_source_names) {
         $self->msg("- adding " . $source);
         my $rs = $schema->resultset($source);
         my $source_dir = io->catdir($tmp_fixture_dir, $self->_name_for_source($rs->result_source));
@@ -1423,6 +1424,92 @@ sub populate {
   return 1;
 }
 
+# the overall logic is modified from SQL::Translator::Parser::DBIx::Class->parse
+sub _get_sorted_sources {
+  my ( $self, $dbicschema ) = @_;
+
+
+  my %table_monikers = map { $_ => 1 } $dbicschema->sources;
+
+  my %tables;
+  foreach my $moniker (sort keys %table_monikers) {
+    my $source = $dbicschema->source($moniker);
+
+    my $table_name = $source->name;
+    my @primary = $source->primary_columns;
+    my @rels = $source->relationships();
+
+    my %created_FK_rels;
+    foreach my $rel (sort @rels) {
+      my $rel_info = $source->relationship_info($rel);
+
+      # Ignore any rel cond that isn't a straight hash
+      next unless ref $rel_info->{cond} eq 'HASH';
+
+      my @keys = map {$rel_info->{cond}->{$_} =~ /^\w+\.(\w+)$/} keys(%{$rel_info->{cond}});
+
+      # determine if this relationship is a self.fk => foreign.pk (i.e. belongs_to)
+      my $fk_constraint;
+      if ( exists $rel_info->{attrs}{is_foreign_key_constraint} ) {
+        $fk_constraint = $rel_info->{attrs}{is_foreign_key_constraint};
+      } elsif ( $rel_info->{attrs}{accessor}
+          && $rel_info->{attrs}{accessor} eq 'multi' ) {
+        $fk_constraint = 0;
+      } else {
+        $fk_constraint = not $source->_compare_relationship_keys(\@keys, \@primary);
+      }
+
+      # Dont add a relation if its not constraining
+      next unless $fk_constraint;
+
+      my $rel_table = $source->related_source($rel)->source_name;
+      # Make sure we don't create the same relation twice
+      my $key_test = join("\x00", sort @keys);
+      next if $created_FK_rels{$rel_table}->{$key_test};
+
+      if (scalar(@keys)) {
+        $created_FK_rels{$rel_table}->{$key_test} = 1;
+
+        # calculate dependencies: do not consider deferrable constraints and
+        # self-references for dependency calculations
+        if (! $rel_info->{attrs}{is_deferrable} and $rel_table ne $table_name) {
+          $tables{$moniker}{$rel_table}++;
+        }
+      }
+    }
+    $tables{$moniker} = {} unless exists $tables{$moniker};
+  }
+
+  # resolve entire dep tree
+  my $dependencies = {
+    map { $_ => _resolve_deps ($_, \%tables) } (keys %tables)
+  };
+
+  # return the sorted result
+  return sort {
+    keys %{$dependencies->{$a} || {} } <=> keys %{ $dependencies->{$b} || {} }
+      ||
+    $a cmp $b
+  } (keys %tables);
+}
+
+sub _resolve_deps {
+  my ( $question, $answers, $seen ) = @_;
+  my $ret = {};
+  $seen ||= {};
+
+  my %seen = map { $_ => $seen->{$_} + 1 } ( keys %$seen );
+  $seen{$question} = 1;
+
+  for my $dep (keys %{ $answers->{$question} }) {
+    return {} if $seen->{$dep};
+    my $subdeps = _resolve_deps( $dep, $answers, \%seen );
+    $ret->{$_} += $subdeps->{$_} for ( keys %$subdeps );
+    ++$ret->{$dep};
+  }
+  return $ret;
+}
+
 sub do_post_ddl {
   my ($self, $params) = @_;
 
@@ -1474,6 +1561,10 @@ sub _name_for_source {
   Frank Switalski <fswitalski@gmail.com>
 
   Chris Akins <chris.hexx@gmail.com>
+
+  Tom Bloor <t.bloor@shadowcat.co.uk>
+
+  Samuel Kaufman <skaufman@cpan.org>
 
 =head1 LICENSE
 

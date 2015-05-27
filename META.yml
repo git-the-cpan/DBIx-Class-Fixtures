@@ -46,7 +46,7 @@ requires:
   perl: v5.6.1
 resources:
   repository: https://github.com/dbsrgits/DBIx-Class-Fixtures.git
-version: 1.001_030
+version: 1.001_031
 x_authority: cpan:SKAUFMAN
 x_contributors:
   - 'Ash Berlin <ash_github@firemirror.com>'
@@ -74,3 +74,4 @@ x_contributors:
   - 'Samuel Kaufman <skaufman@cpan.org>'
   - 'skaufman <sam@socialflow.com>'
   - 'Tim Bunce <Tim.Bunce@ig.co.uk>'
+  - 'Tom Bloor <t.bloor@shadowcat.co.uk>'
