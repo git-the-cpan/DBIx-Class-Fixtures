@@ -5,6 +5,8 @@ use strict;
 use warnings;
 use DBICTest::Schema;
 
+use utf8;
+
 =head1 NAME
 
 DBICTest - Library to be used by DBIx::Class test scripts.
@@ -46,7 +48,11 @@ sub init_schema {
     my $self = shift;
     my %args = @_;
 
-    my $db_file = "t/var/DBIxClass.db";
+    my $db_file
+        = $args{db_dir}
+        ? "$args{db_dir}/DBIxClass.db"
+        : "t/var/DBIxClass.db"
+        ;
 
     mkdir("t/var") unless -d "t/var";
     if ( !$args{no_deploy} ) {
@@ -60,7 +66,7 @@ sub init_schema {
 
     my $schema;
 
-    my @connect_info = ($dsn, $dbuser, $dbpass, { AutoCommit => 1 });
+    my @connect_info = ($dsn, $dbuser, $dbpass, { AutoCommit => 1, sqlite_unicode => 1 });
 
     if ($args{compose_connection}) {
       $schema = DBICTest::Schema->compose_connection(
@@ -152,14 +158,19 @@ sub populate_schema {
         [ 32948, 'Big PK' ],
     ]);
 
+    $schema->populate('Artist::WashedUp', [
+        [ qw/fk_artistid/ ],
+        [ 2 ],
+    ]);
+
     $schema->populate('CD', [
         [ qw/cdid artist title year/ ],
         [ 1, 1, "Spoonful of bees", 1999 ],
         [ 2, 1, "Forkful of bees", 2001 ],
         [ 3, 1, "Caterwaulin' Blues", 1997 ],
         [ 4, 2, "Generic Manufactured Singles", 2001 ],
-        [ 5, 2, "We like girls and stuff", 2003 ],
-        [ 6, 3, "Come Be Depressed With Us", 1998 ],
+        [ 5, 2, "Unicode Chars ™ © • † ∑ α β « » → …", 2015 ],
+        [ 6, 3, "Übertreibung älterer Umlaute with us", 1998 ],
     ]);
 
     $schema->populate('Tag', [

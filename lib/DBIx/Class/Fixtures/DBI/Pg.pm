@@ -1,5 +1,5 @@
 package DBIx::Class::Fixtures::DBI::Pg;
-$DBIx::Class::Fixtures::DBI::Pg::VERSION = '1.001_029';
+$DBIx::Class::Fixtures::DBI::Pg::VERSION = '1.001_030'; # TRIAL
 use strict;
 use warnings;
 use base qw/DBIx::Class::Fixtures::DBI/;
