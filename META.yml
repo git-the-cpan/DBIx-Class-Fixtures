@@ -46,7 +46,7 @@ requires:
   perl: v5.6.1
 resources:
   repository: https://github.com/dbsrgits/DBIx-Class-Fixtures.git
-version: 1.001_031
+version: '1.001032'
 x_authority: cpan:SKAUFMAN
 x_contributors:
   - 'Ash Berlin <ash_github@firemirror.com>'

@@ -1,5 +1,5 @@
 package DBIx::Class::Fixtures::External::File;
-$DBIx::Class::Fixtures::External::File::VERSION = '1.001_031'; # TRIAL
+$DBIx::Class::Fixtures::External::File::VERSION = '1.001032';
 use strict;
 use warnings;
 
