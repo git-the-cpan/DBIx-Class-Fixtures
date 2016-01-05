@@ -67,7 +67,7 @@
          }
       }
    },
-   "release_status" : "testing",
+   "release_status" : "stable",
    "resources" : {
       "repository" : {
          "type" : "git",
@@ -75,7 +75,7 @@
          "web" : "https://github.com/dbsrgits/DBIx-Class-Fixtures"
       }
    },
-   "version" : "1.00103_3",
+   "version" : "1.001034",
    "x_authority" : "cpan:SKAUFMAN",
    "x_contributors" : [
       "Ash Berlin <ash_github@firemirror.com>",
